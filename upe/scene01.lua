@@ -5,7 +5,6 @@ local player = require('player')
 local scene = composer.newScene()
 
 local physics = require('physics')
-physics.setDrawMode('debug')
 physics.start()
 physics.setGravity( 0, 0 )
 
@@ -28,11 +27,6 @@ local function gotoScene02()
     return true
 end
 
-
-
-
-
-
 -- FUNCAO ARRASTAR A PEDRA
 function dragdrop(e)
     
@@ -46,6 +40,8 @@ function dragdrop(e)
             
     end
 end
+
+
 
 -- CRIAR CENA
 function scene:create( event ) 
@@ -67,11 +63,28 @@ function scene:create( event )
     local button2 = display.newImage(sceneGroup, 'assets/botaovoltar.png', _W / 11, _H - 60, 20, 20)
     button2:addEventListener("tap", gotoScene00)
 
+    --retângulo encima da imagem da pedra para criar colisao
+    local r = display.newRect(sceneGroup, _W / 3.2, _H - 135, 10, 10)
+    r.name = 'pedrafixa'
+
     -- PEDRA PARA FAZER O FOGO
-    local p = display.newRect(sceneGroup, _W / 10, _H - 180, 30, 30)
+    local p = display.newRect(sceneGroup, _W / 10, _H - 180, 30, 30, {radius = 20})
+    p.name = 'pedramovel'
     p:addEventListener('touch', dragdrop )
 
     physics.addBody(p, {radius = 15});
+
+    -- Local collision handling
+local function onLocalCollision( self, event )
+    print( event.target.name )        --the first object in the collision
+    print( event.other.name )         --the second object in the collision
+    print( event.selfElement )   --the element (number) of the first object which was hit in the collision
+    print( event.otherElement )  --the element (number) of the second object which was hit in the collision
+end
+p.collision = onLocalCollision
+p:addEventListener( "collision" )
+
+
 end
 
 
